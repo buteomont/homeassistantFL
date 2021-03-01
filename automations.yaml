@@ -1,0 +1,81 @@
+- id: freezer_over_temp
+  alias: Freezer over temp
+  description: Freezer is over 27 degrees
+  trigger:
+  - above: '40'
+    entity_id: sensor.freezer_temperature
+    platform: numeric_state
+  condition: []
+  action:
+    data_template:
+      title: Warning from Tiny House - Freezer is too warm!
+      message: Freezer temperature is {{trigger.to_state.state}} degrees
+    service: notify.send_sms
+  initial_state: true
+- id: fridge_over_temp
+  alias: Fridge over temp
+  description: Refrigerator is over 45 degrees
+  trigger:
+  - above: '45'
+    entity_id: sensor.refrigerator_temperature
+    platform: numeric_state
+  condition: []
+  action:
+    data_template:
+      title: Warning from Tiny House - Refrigerator is too warm!
+      message: The refrigerator temperature is {{trigger.to_state.state}} degrees
+    service: notify.send_sms
+  initial_state: true
+- id: high_inside_humidity
+  alias: High Humidity
+  description: Humidity in the house is over 80%
+  trigger:
+  - above: '80'
+    entity_id: sensor.house_humidity
+    platform: numeric_state
+  condition: []
+  action:
+    data_template:
+      title: Warning from Tiny House - Humidity is too high!
+      message: The humidity in the tiny house is {{trigger.to_state.state}}%.
+    service: notify.send_sms
+  initial_state: true
+- id: high_inside_temperature
+  alias: High House Temperature
+  description: Temperature in the house is over 85 degrees!
+  trigger:
+  - above: '85'
+    entity_id: sensor.indoor_temperature
+    platform: numeric_state
+  condition: []
+  action:
+    data_template:
+      title: Warning from Tiny House - Temperature is too high!
+      message: The temperature in Tiny House is {{trigger.to_state.state}}°.
+    service: notify.send_sms
+  initial_state: true
+- id: enable_breezeway_motion
+  alias: Breezeway camera motion enable
+  description: ''
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition: []
+  action:
+  - entity_id: camera.breezewaycam
+    service: camera.enable_motion_detection
+- id: '1577817691725'
+  alias: Notify On Living Room Motion
+  description: Send text message when motion is detected in living room
+  trigger:
+  - entity_id: binary_sensor.living_room_motion
+    for:
+      seconds: 1
+    from: 'off'
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      message: Motion was detected in the Tiny House!
+    service: notify.send_sms

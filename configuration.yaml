@@ -1,0 +1,269 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+notify: !include notifiers.yaml
+
+history:
+  exclude:
+    entities:
+      - sensor.cumulative_rain
+      - sensor.cumulative_lightning
+      - binary_sensor.lightning_detector_battery
+      - binary_sensor.rain_gauge_battery
+      - binary_sensor.outdoor_th_battery
+      - automation.freezer_over_temp
+      - automation.fridge_over_temp
+      - automation.high_inside_humidity
+      - weather.tinyhouse
+      - zone.home
+
+sensor:
+- platform: mqtt
+  name: "Freezer Temperature"
+  device_class: "temperature"
+  state_topic: "rtl_433/netstore/devices/Esperanza-EWS/3/+/temperature_F"
+  qos: 0
+  unit_of_measurement: "ºF"
+
+- platform: mqtt
+  name: "Freezer Signal Strength"
+  device_class: "signal_strength"
+  state_topic: "rtl_433/netstore/devices/Esperanza-EWS/3/+/rssi"
+  qos: 0
+  unit_of_measurement: "db"
+
+- platform: mqtt
+  name: "Freezer SNR"
+  state_topic: "rtl_433/netstore/devices/Esperanza-EWS/3/+/snr"
+  qos: 0
+  unit_of_measurement: "ratio"
+
+- platform: mqtt
+  name: "Refrigerator Temperature"
+  device_class: "temperature"
+  state_topic: "rtl_433/netstore/devices/Esperanza-EWS/2/+/temperature_F"
+  qos: 0
+  unit_of_measurement: "ºF"
+
+- platform: mqtt
+  name: "Refrigerator Signal Strength"
+  device_class: "signal_strength"
+  state_topic: "rtl_433/netstore/devices/Esperanza-EWS/2/+/rssi"
+  qos: 0
+  unit_of_measurement: "db"
+
+- platform: mqtt
+  name: "Refrigerator SNR"
+  state_topic: "rtl_433/netstore/devices/Esperanza-EWS/2/+/snr"
+  qos: 0
+  unit_of_measurement: "ratio"
+
+- platform: mqtt
+  name: "Indoor  Humidity"
+  device_class: "humidity"
+  state_topic: "rtl_433/netstore/devices/Acurite-6045M/A/+/humidity"
+  qos: 0
+  unit_of_measurement: "%"
+
+- platform: mqtt
+  name: "Indoor  Temperature"
+  device_class: "temperature"
+  state_topic: "rtl_433/netstore/devices/Acurite-6045M/A/+/temperature_F"
+  qos: 0
+  unit_of_measurement: "ºF"
+
+- platform: mqtt
+  name: "Indoor Sensor Signal Strength"
+  device_class: "signal_strength"
+  state_topic: "rtl_433/netstore/devices/Acurite-6045M/A/+/rssi"
+  qos: 0
+  unit_of_measurement: "db"
+
+- platform: mqtt
+  name: "Indoor Sensor SNR"
+  state_topic: "rtl_433/netstore/devices/Acurite-6045M/A/+/snr"
+  qos: 0
+  unit_of_measurement: "ratio"
+
+#- platform: mqtt
+#  name: "Lightning Strike Rate"
+#  state_topic: "rtl_433/netstore/devices/Acurite-6045M/A/106/600/modified_strike_count"
+#  qos: 0
+#  unit_of_measurement: "Strikes/10min"
+
+- platform: mqtt
+  name: "Cumulative Rain"
+  state_topic: "rtl_433/netstore/devices/Acurite-Rain899/0/+/rain_mm"
+  qos: 0
+  unit_of_measurement: "mm"
+
+- platform: mqtt
+  name: "Rain Sensor Signal Strength"
+  device_class: "signal_strength"
+  state_topic: "rtl_433/netstore/devices/Acurite-Rain899/0/+/rssi"
+  qos: 0
+  unit_of_measurement: "db"
+
+- platform: mqtt
+  name: "Rain Sensor SNR"
+  state_topic: "rtl_433/netstore/devices/Acurite-Rain899/0/+/snr"
+  qos: 0
+  unit_of_measurement: "ratio"
+
+- platform: mqtt
+  name: "Cumulative Lightning"
+  state_topic: "rtl_433/netstore/devices/Acurite-6045M/A/+/strike_count"
+  qos: 0
+  unit_of_measurement: "strikes"
+
+- platform: mqtt
+  name: "South Optical Lightning"
+  state_topic: "tinyhouse/lightning/southside/brightness"
+  qos: 0
+  unit_of_measurement: "brightness"
+
+- platform: mqtt
+  name: "South Optical Lightning Signal Strength"
+  device_class: "signal_strength"
+  state_topic: "tinyhouse/lightning/southside/rssi"
+  qos: 0
+  unit_of_measurement: "db"
+
+- platform: mqtt
+  name: "South Optical Lightning SNR"
+  state_topic: "tinyhouse/lightning/southside/snr"
+  qos: 0
+  unit_of_measurement: "ratio"
+
+#- platform: mqtt
+#  name: "24 Hour Rain"
+#  state_topic: "rtl_433/tinyserver/devices/Acurite-Rain899/0/80/86400/daily_rain_mm"
+#  qos: 0
+#  unit_of_measurement: "mm"
+
+- platform: mqtt
+  name: "Storm Distance"
+  state_topic: "rtl_433/netstore/devices/Acurite-6045M/A/+/storm_dist"
+  qos: 0
+  unit_of_measurement: "Km"
+
+- platform: mqtt
+  name: "Outdoor Temperature"
+  device_class: "temperature"
+#  state_topic: "rtl_433/tinyserver/devices/Acurite-Tower/A/calc/temperature_F"
+  state_topic: "rtl_433/netstore/devices/LaCrosse-TX35DTHIT/+/temperature_C"
+  qos: 0
+  unit_of_measurement: "ºF"
+  value_template: "{{ (((value | float) * 9/5) + 32) | round(1) }}"
+
+- platform: mqtt
+  name: "Outdoor Humidity"
+  device_class: "humidity"
+  state_topic: "rtl_433/netstore/devices/LaCrosse-TX35DTHIT/+/humidity"
+  qos: 0
+  unit_of_measurement: "%"
+
+- platform: mqtt
+  name: "Outdoor Sensor Signal Strength"
+  device_class: "signal_strength"
+  state_topic: "rtl_433/netstore/devices/LaCrosse-TX35DTHIT/+/rssi"
+  qos: 0
+  unit_of_measurement: "db"
+
+- platform: mqtt
+  name: "Outdoor Sensor SNR"
+  state_topic: "rtl_433/netstore/devices/LaCrosse-TX35DTHIT/+/snr"
+  qos: 0
+  unit_of_measurement: "ratio"
+
+- platform: sql
+  queries:
+  - name: 1 Hour Rain
+#    query: select round((select state from states where entity_id = 'sensor.cumulative_rain' order by created desc limit 1)-(select state from states where entity_id = 'sensor.cumulative_rain' and created < (datetime('now','-1 hours')) order by created desc  limit 1),2) as 'delta';
+    query: select abs(round((select state from states where entity_id = 'sensor.cumulative_rain' and state <> "unknown" order by created desc limit 1)-(select state from states where entity_id = 'sensor.cumulative_rain' and state <> "unknown" and created < (datetime('now','-1 hours')) order by created desc  limit 1),2)) as 'delta';
+    column: 'delta'
+    unit_of_measurement: "mm"
+  - name: 24 Hour Rain
+#    query: select round((select state from states where entity_id = 'sensor.cumulative_rain' order by created desc limit 1)-(select state from states where entity_id = 'sensor.cumulative_rain' and created < (datetime('now','-24 hours')) order by created desc  limit 1),2) as 'delta';
+    query: select abs(round((select state from states where entity_id = 'sensor.cumulative_rain' and state <> "unknown" order by created desc limit 1)-(select state from states where entity_id = 'sensor.cumulative_rain' and state <> "unknown" and created < (datetime('now','-24 hours')) order by created desc  limit 1),2)) as 'delta';
+    column: 'delta'
+    unit_of_measurement: "mm"
+  - name: 1 Week Rain
+    query: select abs(round((select state from states where entity_id = 'sensor.cumulative_rain' and state <> "unknown" order by created desc limit 1)-(select state from states where entity_id = 'sensor.cumulative_rain' and state <> "unknown" and created < (datetime('now','-168 hours')) order by created desc  limit 1),2)) as 'delta';
+    column: 'delta'
+    unit_of_measurement: "mm"
+  - name: Lightning Activity
+#    query: select round((select state from states where entity_id = 'sensor.cumulative_lightning' order by created desc limit 1)-(select state from states where entity_id = 'sensor.cumulative_lightning' and created < (datetime('now','-10 minutes')) order by created desc  limit 1),0) as 'delta';
+    query: select abs(round((select state from states where entity_id = 'sensor.cumulative_lightning' and state <> "unknown" order by created desc limit 1)-(select state from states where entity_id = 'sensor.cumulative_lightning' and state <> "unknown" and created < (datetime('now','-60 minutes')) order by created desc  limit 1),0)) as 'delta';
+    column: 'delta'
+    unit_of_measurement: "Strikes/Hour"
+ 
+# See https://launchlibrary.net/    
+- platform: launch_library
+  name: "Rocket Launches"
+  
+binary_sensor:
+- platform: mqtt
+  name: "Lightning Detector Battery"
+  state_topic: "rtl_433/tinyserver/devices/Acurite-6045M/A/+/battery_ok"
+  device_class: "battery"
+  payload_on: "0"
+  payload_off: "1"
+  qos: 0
+  
+- platform: mqtt
+  name: "Rain Gauge Battery"
+  state_topic: "rtl_433/netstore/devices/Acurite-Rain899/0/+/battery_ok"
+  device_class: "battery"
+  payload_on: "1" #appears to be inverted vs. the lightning detector
+  payload_off: "0"
+  qos: 0
+
+- platform: mqtt
+  name: "Outdoor TH Battery"
+  state_topic: "rtl_433/netstore/devices/LaCrosse-TX35DTHIT/+/battery_ok"
+  device_class: "battery"
+  payload_on: "0"
+  payload_off: "1"
+  qos: 0
+
+- platform: mqtt
+  name: "Living Room Motion"
+#  state_topic: "rtl_433/tinyserver/devices/PIR_sensor/count"
+  state_topic: "rtl_433/netstore/devices/Generic-Remote/+/cmd"
+  device_class: "motion"
+  payload_on: "62"
+  payload_off: "0"
+  qos: 0
+
+- platform: mqtt
+  name: "Golf Cart Fuel"
+  state_topic: "tinyhouse/golfcart/fuel/level"
+  device_class: "presence"
+  payload_on: "wet"
+  payload_off: "dry"
+  qos: 0
+
+
+ffmpeg:
+
+camera:
+  - platform: onvif
+    name: BreezewayCam
+    host: 192.168.1.200
+    port: 8080
+
+
